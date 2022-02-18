@@ -1,0 +1,66 @@
+1) To Set global user_name
+=> Git Config --global user.name "saddam"
+2) To set global user_email
+=> Git Config --global user.email "saddammohd941@gmail.com"
+3) Initiliaze git
+=> Git init
+4) To add files to tracking area
+=> git add (file_name)
+5) To add multiple files to tracking area
+=> git add .
+6) To check Direcotry status
+=> git status
+7) To Commit files
+=> git commit -m "Message"
+=> git commit -v
+8) git diff commands 
+=> git diff
+=> git diff --staged
+=> git diff --cached
+9) To push changes to central
+=> git push -u origin master
+10) To add remote origin
+=> git remote add origin (git_repo_url)
+11) To view the remote origin
+=> git remote -v
+12) To make a copy from central to local
+=> git clone (git_repo_url)
+13) To pull the latest changes to local
+=> git pull (git_repo_url)
+14)git branch commands:-
+=> git branch (branch_name)  To create branch
+=> git checkout (branch name)  To checkout branch
+=> git checkout -b (branch name)  to create branch and directiy switch into the branch
+=> git branch --list   to list of branches
+=> git branch -d (branch name) For deleting branch
+=> git push -u origin (branch_name)  To push code to specific branch
+15)git log commands:-
+=> git log   To view git logs
+=> git log --p
+=> git log --pretty=oneline
+=> git log --pretty=short
+=> git log --pretty=full
+=> git log --pretty=fuller
+=> git log --oneline --graph
+=> git log --oneline --graph --all
+=> git log --oneline 
+=> git log -3   To view last 3 logs
+16) merge commands
+=> git merge (branch_name)   To merge two branches
+=> git brancg --merge        for which branch we merge
+=> git branch --no-merge     for which branch we not merged
+17) To revert any previous commit
+=> git revert (commit_id)
+18) Clone one particular branch
+=> git clone -b (branch_name) (github_repo_url)
+19) Git stash is used to push files to stash memory
+=> git stash
+20) To view the stash list
+=> git stash list
+21) To get files out of stash memory
+=> git stash pop
+22) To get a specific file out of stash memory
+=> git stash pop stash{id}
+23) to git fetch
+=> git fetch origin
+

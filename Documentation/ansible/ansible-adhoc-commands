@@ -1,0 +1,110 @@
+# To check the connetivity between slaves
+ansible all -m ping
+ansible all -m ping -i ansible_hosts
+
+# How to gather facts of slave machine
+ansible all -m setup
+
+# Tips: -i is used if we are using more than one invertory file 
+
+
+# What if you do not have SSH key-based? How to pass username and password?
+ansible all -m ping --user=ansadm --ask-pass
+
+# TO checkthe uptime of a slave machine
+ansible all -a uptime
+
+# Tips: -m is the module and -a should contain the command it should run which goes as an argument to command and shell.
+
+# check the free memory or memory usage of  host
+ansible all -a "free -m" 
+
+# Execute a command as root user (sudo) on host
+ansible all -m shell -a "cat /etc/passwd|grep -i ansadm" -s --ask-sudo-pass
+
+# Execute a command using become module
+ansible all -m shell -a "cat /etc/passwd|grep -i ansadm" -b -K
+
+# Tips: -b is the option for become and by default it will become root user
+        –K is to tell ansible to ask for SUDO password
+
+#Execute a command as a different user  (sudo su)
+ansible all -m file -a "path=/home/ansadm/test state=directory mode=0755" -b --become-user=ansadm
+
+# Create a Linux user group
+ansible all -s -m group -a "name=test state=present" -b -K
+
+# Create a file with 755 permission
+ansible all -m file -a "path=/home/asnadm/testfile state=touch mode=0755"
+
+# Change ownership of a file
+ansible all -m file -a "path=/home/ansadm group=weblogic owner=weblogic" -b
+
+# Install a package using yum command
+ansible all -m yum -a "name=httpd state=installed"
+
+# Start or stop the service
+# To Start
+ansible all -m service -a "name=httpd state=started" enabled=yes"
+
+# To Stop
+ansible all -m service -a "name=httpd state=stop" enabled=yes"
+
+
+## configuration of ansible with public ip [or] private ip as our wish both are work
+## connect to your ansible master instance 
+ sudo su
+ python --version
+ yum -y install ansible
+ ansible --version
+
+## important vi edit in ansible configuration
+ vi /etc/ansible/hosts
+add our all node group are separate node group like this in this vi edit
+ [all]
+ 13.234.122.78  (pub ip or private ip)
+ 3.6.38.93      (pub ip or private ip)
+ [node-01]
+ 13.234.122.78  (pub ip or private ip)
+ [node-02]
+ 3.6.38.93      (pub ip or private ip)
+
+vi /etc/ansible/ansible.cfg
+ inventory      = /etc/ansible/hosts
+ sudo_user      = root
+[ here uncommit this both ]
+
+#for creating users
+ useradd username
+ passwd username
+ type password:
+ retype password:
+#add user in sudoers file with root priviliages
+vi /etc/sudoers     (or) other command   visudo
+
+ username ALL=(ALL)    NOPASSWD: ALL
+
+vi /etc/ssh/sshd_config
+ PermitRootLogin yes
+ PasswordAuthentication yes
+ #PermitEmptyPasswords no
+ #PasswordAuthentication no
+
+systemctl restart sshd
+
+#to create a keygen in ansible master 
+#switch to user 
+ su - username
+ ssh-keygen  (or) ssh-keygen -t rsa
+ enter 
+ enter
+ enter
+=> our keygen create at this location    /home/ansible/.ssh/   
+   cd /home/ansible/.ssh/
+   ls   [3 files are showing]
+   authorized_keys   id_rsa   id_rsa.pub
+
+##  to copy our public key any other instance 
+ ssh-copy-id user name of that instance@pubip of that instance or private ip
+ex:-  ssh-copy-id username@3.109.183.147 
+our ansible master public key copied in node instance

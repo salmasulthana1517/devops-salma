@@ -1,0 +1,49 @@
+1).Ad-hoc commands  (Simple Linux Commands) there is no idenpotency
+2).Modules          (single command) in  {YAML Language} idenpotency is present
+3).Playbooks        (more than one module is called playbook) in {YAML Language}
+
+Ad-hoc commands are commands which can be run individually to perform quick functions..
+
+These Ad-hoc commands are not used for configuration management and deployment, beacuase these commands are of one time usage..
+
+The ansible Ad-hoc commands uses the /usr/bin/ansible command line tool to automate a single task..
+
+1). ansible Ad-hoc commands pattern---->
+
+go to ansible server------> try this commands
+
+[ansible@ip]# ansible groupname -a "ls" 
+[ansible@ip]# ansible groupname[0] -a "touch file"
+[ansible@ip]# ansible all -a "touch filey"
+[ansible@ip]# ansible groupname -a "ls -a"
+[ansible@ip]# ansible groupname -a "sudo yum install httpd -y"
+[ansible@ip]# ansible groupname -ba "yum install httpd -y"
+[ansible@ip]# ansible groupname -ba "yum remove httpd -y"
+[ansible@ip]# ansible groupname[0] -ba "yum remove httpd -y"
+[ansible@ip]# ansible groupname[0:1] -ba "yum remove httpd -y"
+
+-a is a argument -b is a for sudo
+
+
+2). ansdible modules----->
+
+--> ansible ships with a number of modules (valled module library) that can be executed directery on remote hosts or through 'playbooks'
+your library of modules can reside on any machine, and there are no servers, doemons, or databases requied
+where ansible modules are stored?
+
+the default location for the inventory file is /etc/ansible/hosts
+
+ansible modules commands pattern----->
+
+go to ansible server------> try this commands
+
+[ansible@ip]# ansible groupname -b -m yum -a "pkg=httpd state=present"
+[ansible@ip]# ansible groupname -b -m yum -a "pkg=httd state=latest"
+[ansible@ip]# ansible groupname -b -m yum -a "pkg=httd state=absent"
+[ansible@ip]# ansible groupname -b -m service -a "name=httpd state=started"
+[ansible@ip]# ansible groupname -b -m user -a "name=raj"
+[ansible@ip]# ansible groupname -b -m copy -a "src=file4 dest=/tmp"
+[ansible@ip]# ansible groupname[0] -b -m copy -a "src=file4 dest=/tmp"
+[ansible@ip]# ansible groupname[0:1] -b -m copy -a "src=file4 dest=/tmp"
+[ansible@ip]# ansible groupname -m setup 
+[ansible@ip]# ansible groupname -m setup -a "filter=*ipv4*"

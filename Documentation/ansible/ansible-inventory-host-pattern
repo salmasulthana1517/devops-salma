@@ -1,0 +1,167 @@
+go to aws account create 3 ec2 instances in same availabilityzone
+
+
+take access of all machines via putty or git bash or mobaxterm
+
+now go inside ansible server and download package
+
+[root@ip]$ wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+now do "ls"
+
+[root@ip]# yum install epel-release-latest-7.noarch.rpm
+
+[root@ip]# yum update -y
+
+now we have to install all the packages are one by one
+
+[root@ip]# yum install git python python-devel python-pip openssl ansible -y
+
+Install Ansible using amazon-linux-extras Repository
+Ansible package can be installed on amazon linux using amazon provided packages.
+
+[root@ip]# sudo amazon-linux-extras install ansible2
+
+Check Ansible version
+To verify whether Ansible is installed on your machine, you can verify it as follows,
+
+[root@ip]# ansible --version
+
+ansible 2.9.13
+config file = /etc/ansible/ansible.cfg
+configured module search path = [u'/root/.ansible/plugins/modules', u'/usr/share/ansible/plugins/modules']
+ansible python module location = /usr/lib/python2.7/site-packages/ansible
+executable location = /bin/ansible
+python version = 2.7.18 (default, Aug 27 2020, 21:22:52) [GCC 7.3.1 20180712 (Red Hat 7.3.1-9)]
+
+now go to hosts file inside ansible server and paste private ip of node1 & node2
+
+[root@ip]# vi /etc/ansible/hosts
+
+[demo]
+13.233.11.237
+13.233.250.81
+[dev group]
+13.233.11.237
+[ops group]
+13.233.250.81
+
+now this hosts file is only working a file updating ansible.cfg file
+
+[root@ip] # vi /etc/ansible/ansible.cfg
+
+uncommit [remove # from this]
+
+inventory = /etc/ansible/hosts
+sudo-user = root
+
+now create one user, in all the three instances
+
+[root@ip] # useradd ansible
+
+now set password for this user
+
+[root@ip] # passwd ansible
+
+now switch as ansible user 
+
+[root@ip] # su - ansible
+
+this ansible user dont have sudo priviliages right now if you want to give sudo priviliages to ansible user
+
+[root@ ip ] # visudo (or) vi /etc/sudoers
+
+now go to inside the file 
+
+root    ALL=(ALL)     ALL
+ansible ALL=(ALL) NOPASSWD: ALL
+:wq!
+
+now do this thing in other nodes also now go the ansible server and try is inside httpd package as a ansible user
+
+[ansible@ip]# sudo yum install httpd -y
+
+now establish connection between server and node go to ansible server
+
+[ansible@ip]$ ssh 10.0.1.114 (node1 or node2 private ip address)
+
+permisssion denied
+
+now we have to do some changes in sshd_config file go to ansible server do some changes & saved the file
+
+[root@ip]$ vi /etc/ssh/sshd_config
+ 
+ PermitRootLogin yes
+ PasswordAuthentication yes
+ #PermitEmptyPasswords no
+ #PasswordAuthentication no
+
+now restart service sshd
+
+[root@ip]# systemctl restart sshd
+
+do this work node1 & node2 also
+
+now verify in ansible server
+
+[root@ip] $ su - ansible
+
+[ansible@ip]$ ssh 10.0.1.114 (node1 or node2 private ip address)
+
+now it ask for password enter the password after that you will be inside the node1 or node2 
+
+you can make any changes it should reflect on node1 or node2  that you connected by "ssh"
+
+when you exit accessing node1 or node2 try to access node1 or node2 again asking password
+
+now go to "ansible server" and create a "keygen" for keygen run this command as ansible user
+
+[ansible@ip]# ssh-keygen
+
+[ansible@ip]# enter
+
+[ansible@ip]# enter
+
+[ansible@ip]# enter
+
+[ansible@ip]# ls -a
+o/p--->   .ssh [file]
+
+[ansible@ip]# cd .ssh
+
+[ansible@ip.ssh]# ls
+o/p--->  id_rsa id_rsa.pub
+
+trust relationship
+root=root
+user=user
+
+now i need to copy publickey in both nodes from ansible sever
+
+[ansible@ip.ssh]# ssh-copy-id username@private ip of node1 or node2
+                  ssh-copy-id ansible@10.0.1.192
+                  ssh-copy-id ansible@10.0.9.162
+now it ask password last time type the password
+now trust relationship is established beetween ansible server and node1 and node2
+now verify go to ansible server
+
+[ansible@ip]# ssh 10.0.1.114 (node1 or node2 private ip address)
+
+now it directly accessing the nodes without any authentications
+
+#########ansible host pattern commands########### 
+
+--> "all" pattern refers to all the machines in inventoty
+
+--> ansible all --list-hosts
+--> ansible <group name> --list-hosts
+--> ansible <group name>[0] --list-hosts  {picks first machine of the gruop}
+            <group name>[1] --list-hosts  {picks second machine of the gruop}
+            <group name>[2] --list-hosts  {picks third machine of the gruop}
+            <group name>[-1] --list-hosts {picks last machine of the group}
+first node represent by [0] 2nd node represent by [2] last node represent by [-1]
+--> ansible <group name>[0:1] --list-hosts  {picks first two machine of the gruop}
+            <group name>[1:4] --list-hosts  {picks first four machine of the gruop}
+            <group name>[2:5] --list-hosts  {picks 2,3,4,5,6  machine of the gruop}
+group separated by a colon can be used to use hosts from multiple groups
+--> groupname1: groupname2
