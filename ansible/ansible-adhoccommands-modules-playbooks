@@ -48,3 +48,4 @@ go to ansible server------> try this commands
 [ansible@ip]# ansible groupname -m setup 
 [ansible@ip]# ansible groupname -m setup -a "filter=*ipv4*"
 
+#
